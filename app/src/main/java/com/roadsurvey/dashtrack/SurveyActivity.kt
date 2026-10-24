@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.location.GnssStatus
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -64,6 +65,16 @@ class SurveyActivity : AppCompatActivity(), LocationListener {
     private var lastLogged: Fix? = null
     private var distM = 0.0
     private var tagCount = 0
+    private var satsInView = 0
+    private var satsUsed = 0
+    private val gnssCallback = object : GnssStatus.Callback() {
+        override fun onSatelliteStatusChanged(status: GnssStatus) {
+            satsInView = status.satelliteCount
+            var used = 0
+            for (i in 0 until status.satelliteCount) if (status.usedInFix(i)) used++
+            satsUsed = used
+        }
+    }
 
     private val ui = Handler(Looper.getMainLooper())
     private val hudTick = object : Runnable {
@@ -217,6 +228,7 @@ class SurveyActivity : AppCompatActivity(), LocationListener {
             toast("Turn ON device location (GPS)")
         }
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 0f, this, Looper.getMainLooper())
+        try { lm.registerGnssStatusCallback(gnssCallback, ui) } catch (_: Exception) {}
     }
 
     override fun onLocationChanged(loc: Location) {
@@ -291,12 +303,12 @@ class SurveyActivity : AppCompatActivity(), LocationListener {
         } else sb.append("READY\n")
         val l = lastLoc
         if (l == null) {
-            sb.append("GPS: searching…\n")
+            sb.append("GPS: searching…  sats $satsUsed/$satsInView\n")
         } else {
             val age = (SystemClock.elapsedRealtimeNanos() - l.elapsedRealtimeNanos) / 1_000_000_000
             sb.append(String.format(Locale.US, "%.0f km/h\n", l.speed * 3.6))
             sb.append(String.format(Locale.US, "%.6f N %.6f E\n", l.latitude, l.longitude))
-            sb.append(String.format(Locale.US, "acc ±%.0f m  age %ds\n", l.accuracy, age))
+            sb.append(String.format(Locale.US, "acc ±%.0f m  age %ds  sats %d/%d\n", l.accuracy, age, satsUsed, satsInView))
         }
         sb.append(String.format(Locale.US, "Dist %.2f km  Tags %d", distM / 1000, tagCount))
         hud.text = sb
@@ -307,6 +319,7 @@ class SurveyActivity : AppCompatActivity(), LocationListener {
         recording?.stop()
         recording = null
         lm.removeUpdates(this)
+        try { lm.unregisterGnssStatusCallback(gnssCallback) } catch (_: Exception) {}
         closeWriters()
         super.onDestroy()
     }
