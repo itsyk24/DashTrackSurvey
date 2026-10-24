@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
             topMargin = dp(12); bottomMargin = dp(12)
         })
         root.addView(TextView(this).apply {
-            text = "Previous surveys (tap to replay, long-press to delete)"
+            text = "Previous surveys (tap to replay, long-press for upload / delete)"
             setTextColor(Color.GRAY)
         })
         empty = TextView(this).apply {
@@ -157,11 +157,23 @@ class MainActivity : AppCompatActivity(), LocationListener {
         }
         list.setOnItemLongClickListener { _, _, pos, _ ->
             val run = runs[pos]
+            val signed = CloudSync.signedInEmail(this)
+            val items = arrayOf("☁ Upload to cloud", "🗑 Delete", if (signed != null) "Sign out ($signed)" else "Cloud sign-in")
             AlertDialog.Builder(this)
-                .setTitle("Delete ${run.name}?")
-                .setMessage("Video, GPS track and tags will be permanently deleted.")
-                .setPositiveButton("Delete") { _, _ -> run.deleteRecursively(); refresh() }
-                .setNegativeButton("Cancel", null)
+                .setTitle(run.name)
+                .setItems(items) { _, which ->
+                    when (which) {
+                        0 -> CloudSync.uploadAsync(this, run) { refresh() }
+                        1 -> AlertDialog.Builder(this)
+                            .setTitle("Delete ${run.name}?")
+                            .setMessage("Video, GPS track and tags will be permanently deleted from this phone.")
+                            .setPositiveButton("Delete") { _, _ -> run.deleteRecursively(); refresh() }
+                            .setNegativeButton("Cancel", null)
+                            .show()
+                        2 -> if (signed != null) { CloudSync.signOut(this); refresh() }
+                             else CloudSync.ensureLogin(this) { refresh() }
+                    }
+                }
                 .show()
             true
         }
@@ -323,9 +335,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
             val nTags = RunIO.readTags(d).size
             val km = (fixes.lastOrNull()?.distM ?: 0.0) / 1000
             val dur = RunIO.fmtTime(fixes.lastOrNull()?.tMs ?: 0)
-            val mb = File(d, RunIO.VIDEO).length() / (1024 * 1024)
-            String.format(Locale.US, "%s\n%.2f km · %s · %d tags · %d fixes · %d MB",
-                d.name, km, dur, nTags, fixes.size, mb)
+            val mb = RunIO.videoFile(d).length() / (1024 * 1024)
+            val cloud = if (CloudSync.isUploaded(d)) "☁ " else ""
+            String.format(Locale.US, "%s%s\n%.2f km · %s · %d tags · %d fixes · %d MB",
+                cloud, d.name, km, dur, nTags, fixes.size, mb)
         }
         list.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, labels)
         empty.visibility = if (runs.isEmpty()) View.VISIBLE else View.GONE

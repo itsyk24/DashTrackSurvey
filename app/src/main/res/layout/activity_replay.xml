@@ -57,6 +57,11 @@
             android:layout_width="wrap_content" android:layout_height="40dp"
             android:minWidth="0dp" android:minHeight="0dp" android:text="Fit route" android:textSize="12sp" />
 
+        <Button android:id="@+id/btnUpload" style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content" android:layout_height="40dp"
+            android:minWidth="0dp" android:minHeight="0dp" android:text="☁ Upload"
+            android:textColor="#1565C0" android:textSize="12sp" />
+
         <Button android:id="@+id/btnShare" style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content" android:layout_height="40dp"
             android:minWidth="0dp" android:minHeight="0dp" android:text="Export"

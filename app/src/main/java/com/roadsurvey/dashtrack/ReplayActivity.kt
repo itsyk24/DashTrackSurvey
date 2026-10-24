@@ -189,7 +189,7 @@ class ReplayActivity : AppCompatActivity() {
     // ---------------- Video ----------------
 
     private fun setupVideo() {
-        val vf = File(dir, RunIO.VIDEO)
+        val vf = RunIO.videoFile(dir)
         if (!vf.exists()) { toast("No video file in this run"); return }
         video.setVideoURI(Uri.fromFile(vf))
         video.setOnPreparedListener { mp ->
@@ -297,6 +297,12 @@ class ReplayActivity : AppCompatActivity() {
         }
         btnFollow.setOnClickListener { setFollow(!follow) }
         findViewById<Button>(R.id.btnFit).setOnClickListener { setFollow(false); fitRoute() }
+        findViewById<Button>(R.id.btnUpload).apply {
+            text = if (CloudSync.isUploaded(dir)) "☁ Uploaded" else "☁ Upload"
+            setOnClickListener { b ->
+                CloudSync.uploadAsync(this@ReplayActivity, dir) { ok -> if (ok) (b as Button).text = "☁ Uploaded" }
+            }
+        }
         findViewById<Button>(R.id.btnShare).setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle("Export ${dir.name}")
@@ -315,7 +321,7 @@ class ReplayActivity : AppCompatActivity() {
     private fun share(includeVideo: Boolean) {
         try {
             Exporter.writeAll(dir, fixes, tags)
-            val files = dir.listFiles()?.filter { it.isFile && (includeVideo || it.name != RunIO.VIDEO) } ?: return
+            val files = dir.listFiles()?.filter { it.isFile && it.name != CloudSync.MARKER && (includeVideo || !it.name.endsWith(".mp4")) } ?: return
             val uris = ArrayList(files.map { FileProvider.getUriForFile(this, "$packageName.files", it) })
             val i = Intent(Intent.ACTION_SEND_MULTIPLE).apply {
                 type = "*/*"

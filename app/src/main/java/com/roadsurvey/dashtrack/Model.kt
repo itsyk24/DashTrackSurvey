@@ -81,6 +81,13 @@ object RunIO {
     const val TAGS = "tags.csv"
     const val VIDEO = "video.mp4"
 
+    /** New runs save the video as RUN_xxx.mp4 (unique name for OneDrive); old runs used video.mp4. */
+    fun videoFile(dir: File): File {
+        val named = File(dir, "${dir.name}.mp4")
+        val legacy = File(dir, VIDEO)
+        return if (!named.exists() && legacy.exists()) legacy else named
+    }
+
     fun surveysDir(ctx: Context): File =
         File(ctx.getExternalFilesDir(null) ?: ctx.filesDir, "surveys").apply { mkdirs() }
 

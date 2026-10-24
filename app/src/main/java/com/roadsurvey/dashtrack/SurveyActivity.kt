@@ -175,7 +175,7 @@ class SurveyActivity : AppCompatActivity(), LocationListener {
         startElapsedMs = -1
         calibrated = false
 
-        val out = FileOutputOptions.Builder(File(dir, RunIO.VIDEO)).build()
+        val out = FileOutputOptions.Builder(File(dir, "${dir.name}.mp4")).build()
         var pending = vc.output.prepareRecording(this, out)
         if (hasPerm(Manifest.permission.RECORD_AUDIO)) pending = pending.withAudioEnabled()
         recording = pending.start(ContextCompat.getMainExecutor(this)) { ev -> onRecordEvent(ev) }
