@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F4F4F4"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="#FFFFFF"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="4dp">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="#222222"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <Button android:id="@+id/btnBack" style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content" android:layout_height="40dp"
+            android:minWidth="0dp" android:minHeight="0dp" android:text="−10s" android:textSize="12sp" />
+
+        <Button android:id="@+id/btnPlay"
+            android:layout_width="52dp" android:layout_height="40dp"
+            android:backgroundTint="#C62828" android:minWidth="0dp" android:minHeight="0dp"
+            android:text="▶" android:textColor="#FFFFFF" android:textSize="14sp" />
+
+        <Button android:id="@+id/btnFwd" style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content" android:layout_height="40dp"
+            android:minWidth="0dp" android:minHeight="0dp" android:text="+10s" android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/timeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="monospace"
+            android:text="00:00 / 00:00"
+            android:textColor="#222222"
+            android:textSize="12sp" />
+
+        <Button android:id="@+id/btnFollow" style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content" android:layout_height="40dp"
+            android:minWidth="0dp" android:minHeight="0dp" android:text="Follow ✓" android:textSize="12sp" />
+
+        <Button android:id="@+id/btnFit" style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content" android:layout_height="40dp"
+            android:minWidth="0dp" android:minHeight="0dp" android:text="Fit route" android:textSize="12sp" />
+
+        <Button android:id="@+id/btnShare" style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content" android:layout_height="40dp"
+            android:minWidth="0dp" android:minHeight="0dp" android:text="Export"
+            android:textColor="#C62828" android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:padding="4dp">
+
+        <org.osmdroid.views.MapView
+            android:id="@+id/map"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="#000000">
+
+                <VideoView
+                    android:id="@+id/video"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+
+                <TextView android:id="@+id/cardSpeed" style="@style/Card" />
+                <TextView android:id="@+id/cardLat" style="@style/Card" />
+                <TextView android:id="@+id/cardLon" style="@style/Card" />
+                <TextView android:id="@+id/cardTime" style="@style/Card" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.roadsurvey.dashtrack.SpeedProfileView
+        android:id="@+id/profile"
+        android:layout_width="match_parent"
+        android:layout_height="86dp"
+        android:background="#FFFFFF" />
+</LinearLayout>

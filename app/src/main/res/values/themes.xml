@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.DashTrack" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#C62828</item>
+        <item name="colorPrimaryDark">#8E0000</item>
+        <item name="colorAccent">#C62828</item>
+        <item name="android:windowBackground">#F4F4F4</item>
+    </style>
+
+    <style name="Card">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginEnd">3dp</item>
+        <item name="android:background">#FFFFFF</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:textColor">#222222</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:maxLines">3</item>
+    </style>
+</resources>
